@@ -1,0 +1,47 @@
+name: CI/CD Pipeline - Cloud Native Project
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas
+
+      - name: Run data analysis script (data_analysis.py)
+        run: |
+          python data_analysis.py
+
+      - name: List project files after script run
+        run: |
+          ls -R
+          echo "Data analysis script completed successfully."
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          docker build -t cloud-native-app:latest .
+
+      - name: Simulated deployment step
+        run: |
+          echo "Simulated deployment: Docker image cloud-native-app:latest built successfully."
+          echo "In a real environment, this step would push the image or deploy to a cluster."
+
